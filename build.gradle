@@ -1,0 +1,38 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'me.tatarka:gradle-retrolambda:2.1.0'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'java'
+apply plugin: 'retrolambda'
+
+retrolambda {
+    jdk System.getenv("JAVA8_HOME")
+    oldJdk System.getenv("JAVA_HOME")
+    javaVersion JavaVersion.VERSION_1_7
+}
+
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: '*.jar')
+
+    compile 'com.squareup.retrofit:retrofit:+'
+
+    compile 'com.fasterxml.jackson.core:jackson-core:+'
+    compile 'com.fasterxml.jackson.core:jackson-databind:+'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:+'
+
+    testCompile 'junit:junit:+'
+}
