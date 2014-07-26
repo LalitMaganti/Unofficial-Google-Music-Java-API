@@ -1,1 +1,17 @@
+##Unofficial-Google-Music-Java-API
+### What is this project about?
+This is an unofficial client written in Java for accessing the API used by Google Music (both the Locker and All Access are planned although only a small part of the Locker is supported at the moment).
 
+This project is based on the the excellent work of Simon Weber whose Python API is this projects inspiration. See this at https://github.com/simon-weber/Unofficial-Google-Music-API
+
+## Important Note
+This project is unoffical! It is neither supported neither endorsed by Google. It could break at any moment if they decide to cut off access to it. Please be considerate in the use of it - don't go overboard with the API calls. Thank you.
+
+## How to use
+This section still needs to be written up properly. For now you can look at https://github.com/tilal6991/Unofficial-Google-Music-Java-API/blob/master/src/main/java/io/fusionx/googlemusic/Example.java for an examle of using the client.
+
+Eventually both asynchronous and synchronous clients will be supported but for the moment only the synchronous client has been published
+
+
+## Licensing
+This project is licensed under the GPL v3. I will add a LICENSE file as this project becomes more mature.
