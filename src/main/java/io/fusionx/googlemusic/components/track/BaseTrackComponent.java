@@ -8,7 +8,7 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.fusionx.googlemusic.base.SyncClient;
+import io.fusionx.googlemusic.sync.SyncClient;
 import io.fusionx.googlemusic.model.Track;
 import io.fusionx.googlemusic.protocol.MobileProtocol;
 import java8.util.stream.StreamSupport;

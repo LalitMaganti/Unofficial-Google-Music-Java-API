@@ -30,6 +30,8 @@ dependencies {
 
     compile 'com.squareup.retrofit:retrofit:+'
 
+    compile 'com.google.guava:guava:+'
+
     compile 'com.fasterxml.jackson.core:jackson-core:+'
     compile 'com.fasterxml.jackson.core:jackson-databind:+'
     compile 'com.fasterxml.jackson.core:jackson-annotations:+'

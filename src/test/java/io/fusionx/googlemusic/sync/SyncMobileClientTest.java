@@ -1,4 +1,4 @@
-package io.fusionx.googlemusic.base;
+package io.fusionx.googlemusic.sync;
 
 import org.junit.Test;
 
