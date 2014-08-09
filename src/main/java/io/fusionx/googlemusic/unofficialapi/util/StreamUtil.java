@@ -1,4 +1,4 @@
-package io.fusionx.googlemusic.util;
+package io.fusionx.googlemusic.unofficialapi.util;
 
 
 import java.io.BufferedReader;

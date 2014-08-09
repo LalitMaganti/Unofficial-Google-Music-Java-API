@@ -1,8 +1,8 @@
-package io.fusionx.googlemusic.components.auth;
+package io.fusionx.googlemusic.unofficialapi.components.auth;
 
 import retrofit.RetrofitError;
 
-public interface AuthenticationComponent {
+public interface AuthComponent {
 
     public String getAuthorizationHeader();
 

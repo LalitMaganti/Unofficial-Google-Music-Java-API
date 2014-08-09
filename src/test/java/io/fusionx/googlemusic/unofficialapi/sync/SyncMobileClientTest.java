@@ -1,4 +1,4 @@
-package io.fusionx.googlemusic.sync;
+package io.fusionx.googlemusic.unofficialapi.sync;
 
 import org.junit.Test;
 

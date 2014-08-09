@@ -1,9 +1,6 @@
-package io.fusionx.googlemusic.components.auth;
+package io.fusionx.googlemusic.unofficialapi.components.auth;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
-import io.fusionx.googlemusic.model.Device;
-import io.fusionx.googlemusic.protocol.MobileProtocol;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,23 +8,25 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.fusionx.googlemusic.sync.SyncClient;
-import io.fusionx.googlemusic.util.Util;
+import io.fusionx.googlemusic.unofficialapi.client.GuavaClient;
+import io.fusionx.googlemusic.unofficialapi.model.Device;
+import io.fusionx.googlemusic.unofficialapi.protocol.MobileProtocol;
+import io.fusionx.googlemusic.unofficialapi.util.Util;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Header;
 import retrofit.client.Response;
 import retrofit.http.GET;
 
-public abstract class BaseAuthenticationComponent implements AuthenticationComponent {
+public abstract class RetrofitBaseAuthComponent implements AuthComponent {
 
     public static final String ENDPOINT_URL = "https://play.google.com";
+
+    protected final List<Device> mDevices = new ArrayList<>();
 
     private final MobileProtocol mMobileProtocol;
 
     private final WebClientAPI mWebClientAPI;
-
-    protected final List<Device> mDevices = new ArrayList<>();
 
     protected String mAuthToken;
 
@@ -35,13 +34,18 @@ public abstract class BaseAuthenticationComponent implements AuthenticationCompo
 
     private String mSjsaidCookie;
 
-    public BaseAuthenticationComponent() {
+    public RetrofitBaseAuthComponent() {
         final RestAdapter.Builder restAdapter = new RestAdapter.Builder()
                 .setEndpoint(ENDPOINT_URL);
         mMobileProtocol = restAdapter.build().create(MobileProtocol.class);
 
         restAdapter.setEndpoint(ENDPOINT_URL);
         mWebClientAPI = restAdapter.build().create(WebClientAPI.class);
+    }
+
+    private static String getCookieFromHeader(final String header, final String cookieName) {
+        return header.substring(header.indexOf(cookieName) + cookieName.length(),
+                header.indexOf(";"));
     }
 
     @Override
@@ -59,20 +63,15 @@ public abstract class BaseAuthenticationComponent implements AuthenticationCompo
             final Response response = mMobileProtocol
                     .getDeviceIds(getAuthorizationHeader(), mXtCookie, mSjsaidCookie);
             final InputStream inputStream = response.getBody().in();
-            final JsonNode rootNode = SyncClient.OBJECT_MAPPER.readTree(inputStream);
+            final JsonNode rootNode = GuavaClient.OBJECT_MAPPER.readTree(inputStream);
             final JsonNode nodes = rootNode.get("settings").get("devices");
             for (final JsonNode node : nodes) {
-                mDevices.add(Device.fromJson(SyncClient.OBJECT_MAPPER, node));
+                mDevices.add(Device.fromJson(GuavaClient.OBJECT_MAPPER, node));
             }
             inputStream.close();
         } catch (IOException e) {
             e.printStackTrace(System.out);
         }
-    }
-
-    private static String getCookieFromHeader(final String header, final String cookieName) {
-        return header.substring(header.indexOf(cookieName) + cookieName.length(),
-                header.indexOf(";"));
     }
 
     private void loginToWebClient() {
@@ -96,7 +95,7 @@ public abstract class BaseAuthenticationComponent implements AuthenticationCompo
         }
     }
 
-    public Device getRandomMobileDevice() {
+    public Device getFirstMobileDevice() {
         return mDevices.get(0);
     }
 

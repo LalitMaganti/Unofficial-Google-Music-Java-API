@@ -1,4 +1,4 @@
-package io.fusionx.googlemusic.protocol;
+package io.fusionx.googlemusic.unofficialapi.protocol;
 
 import retrofit.client.Response;
 import retrofit.http.Body;

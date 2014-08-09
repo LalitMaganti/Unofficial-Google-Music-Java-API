@@ -1,10 +1,10 @@
-package io.fusionx.googlemusic.components.track;
-
-import io.fusionx.googlemusic.model.Track;
-import retrofit.RetrofitError;
+package io.fusionx.googlemusic.unofficialapi.components.track;
 
 import java.io.IOException;
 import java.util.List;
+
+import io.fusionx.googlemusic.unofficialapi.model.Track;
+import retrofit.RetrofitError;
 
 public interface TrackComponent {
 

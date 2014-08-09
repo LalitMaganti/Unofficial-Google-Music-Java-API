@@ -1,5 +1,6 @@
-package io.fusionx.googlemusic.model;
+package io.fusionx.googlemusic.unofficialapi.model;
 
 public class AlbumArtistPhoto {
+
     public String url;
 }

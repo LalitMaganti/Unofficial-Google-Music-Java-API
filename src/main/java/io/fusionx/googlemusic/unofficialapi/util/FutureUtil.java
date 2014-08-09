@@ -1,4 +1,4 @@
-package io.fusionx.googlemusic.util;
+package io.fusionx.googlemusic.unofficialapi.util;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;

@@ -1,8 +1,8 @@
-package io.fusionx.googlemusic.components.auth;
+package io.fusionx.googlemusic.unofficialapi.components.auth;
 
 import java.util.List;
 
-import io.fusionx.googlemusic.util.Util;
+import io.fusionx.googlemusic.unofficialapi.util.Util;
 import java8.util.stream.StreamSupport;
 import retrofit.RestAdapter;
 import retrofit.client.Response;
@@ -10,7 +10,7 @@ import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.POST;
 
-public class ClientLoginAuthenticationComponent extends BaseAuthenticationComponent {
+public class RetrofitClientLoginAuthComponent extends RetrofitBaseAuthComponent {
 
     private static final String ENDPOINT_URL = "https://www.google.com/";
 
@@ -22,7 +22,7 @@ public class ClientLoginAuthenticationComponent extends BaseAuthenticationCompon
 
     private boolean mLoggedIn;
 
-    public ClientLoginAuthenticationComponent() {
+    public RetrofitClientLoginAuthComponent() {
         final RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(ENDPOINT_URL)
                 .build();

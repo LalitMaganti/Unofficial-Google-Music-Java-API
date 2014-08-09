@@ -1,4 +1,4 @@
-package io.fusionx.googlemusic;
+package io.fusionx.googlemusic.unofficialapi;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -6,30 +6,26 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-import io.fusionx.googlemusic.async.AsyncClient;
-import io.fusionx.googlemusic.async.AsyncMobileClient;
-import io.fusionx.googlemusic.model.Track;
-import io.fusionx.googlemusic.sync.SyncClient;
-import io.fusionx.googlemusic.sync.SyncMobileClient;
-import io.fusionx.googlemusic.util.FutureUtil;
-import io.fusionx.googlemusic.util.Util;
+import io.fusionx.googlemusic.unofficialapi.client.GuavaClient;
+import io.fusionx.googlemusic.unofficialapi.client.ProgrammableGuavaClient;
+import io.fusionx.googlemusic.unofficialapi.model.Track;
+import io.fusionx.googlemusic.unofficialapi.util.FutureUtil;
 import java8.util.stream.StreamSupport;
 
 public class Example {
 
     public static void main(final String[] args) throws IOException {
-        if (args.length == 1 && args[0].equals("sync")) {
-            sync();
-        } else {
+        if (args.length == 1 && args[0].equals("async")) {
             async();
+        } else {
+            sync();
         }
     }
 
     private static void async() throws IOException {
         final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        final AsyncClient mobileClient = new AsyncMobileClient();
+        final GuavaClient mobileClient = new ProgrammableGuavaClient();
 
         System.out.print("Username: ");
         final String username = reader.readLine();
@@ -37,23 +33,23 @@ public class Example {
         System.out.print("Password: ");
         final String password = reader.readLine();
 
-        final ListenableFuture<Boolean> loginFuture = mobileClient.login(username, password);
-        FutureUtil.addCallback(loginFuture, r -> Example.getTracks(mobileClient, reader, r),
+        final ListenableFuture<Boolean> future = mobileClient.login(username, password).async();
+        FutureUtil.addCallback(future, r -> Example.getTracks(mobileClient, reader, r),
                 Throwable::printStackTrace);
     }
 
-    private static void getTracks(final AsyncClient mobileClient,
+    private static void getTracks(final GuavaClient mobileClient,
             final BufferedReader reader, final Boolean result) {
         if (!result) {
             return;
         }
 
-        final ListenableFuture<List<Track>> future = mobileClient.getAllTracks();
+        final ListenableFuture<List<Track>> future = mobileClient.getAllTracks().async();
         FutureUtil.addCallback(future, r -> Example.getStreamUrl(mobileClient, reader, r),
                 Throwable::printStackTrace);
     }
 
-    private static void getStreamUrl(final AsyncClient mobileClient, final BufferedReader reader,
+    private static void getStreamUrl(final GuavaClient mobileClient, final BufferedReader reader,
             final List<Track> list) {
         System.out.print("Name of track to find: ");
         final String searchParam;
@@ -65,13 +61,13 @@ public class Example {
         }
 
         Track track = findTrack(list, searchParam);
-        final ListenableFuture<String> future = mobileClient.getTrackUrl(track);
+        final ListenableFuture<String> future = mobileClient.getTrackUrl(track).async();
         FutureUtil.addCallback(future, System.out::println, Throwable::printStackTrace);
     }
 
     private static void sync() throws IOException {
         final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        final SyncClient mobileClient = new SyncMobileClient();
+        final GuavaClient mobileClient = new ProgrammableGuavaClient();
 
         boolean loggedIn = false;
         while (!loggedIn) {
@@ -81,19 +77,19 @@ public class Example {
             System.out.print("Password: ");
             final String password = reader.readLine();
 
-            loggedIn = mobileClient.login(username, password);
+            loggedIn = mobileClient.login(username, password).sync();
 
             if (!loggedIn) {
                 System.out.println("Login failed. Try again");
             }
         }
-        final List<Track> list = mobileClient.getAllTracks();
+        final List<Track> list = mobileClient.getAllTracks().sync();
 
         System.out.print("Name of track to find: ");
         final String searchParam = reader.readLine();
 
         Track track = findTrack(list, searchParam);
-        System.out.println(mobileClient.getTrackUrl(track));
+        System.out.println(mobileClient.getTrackUrl(track).sync());
 
         promptUser();
         String line;

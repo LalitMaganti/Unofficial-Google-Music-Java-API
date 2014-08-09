@@ -1,4 +1,4 @@
-package io.fusionx.googlemusic.components.track;
+package io.fusionx.googlemusic.unofficialapi.components.track;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -8,27 +8,28 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.fusionx.googlemusic.sync.SyncClient;
-import io.fusionx.googlemusic.model.Track;
-import io.fusionx.googlemusic.protocol.MobileProtocol;
+import io.fusionx.googlemusic.unofficialapi.client.GuavaClient;
+import io.fusionx.googlemusic.unofficialapi.components.auth.AuthComponent;
+import io.fusionx.googlemusic.unofficialapi.model.Track;
+import io.fusionx.googlemusic.unofficialapi.protocol.MobileProtocol;
 import java8.util.stream.StreamSupport;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Header;
 import retrofit.client.Response;
 
-public class BaseTrackComponent implements TrackComponent {
+public class RetrofitTrackComponent implements TrackComponent {
 
     public static final String MAIN_BASE_URL = "https://www.googleapis.com/sj/v1.5";
 
-    private final SyncClient mSyncClient;
+    private final AuthComponent mAuthComponent;
 
     private final MobileProtocol mSjProtocol;
 
     private final MobileProtocol mAndroidClientProtocol;
 
-    public BaseTrackComponent(final SyncClient syncClient) {
-        mSyncClient = syncClient;
+    public RetrofitTrackComponent(final AuthComponent authComponent) {
+        mAuthComponent = authComponent;
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(MAIN_BASE_URL)
@@ -42,17 +43,17 @@ public class BaseTrackComponent implements TrackComponent {
     }
 
     @Override
-    public List<Track> getAllTracks() throws IOException{
+    public List<Track> getAllTracks() throws IOException {
         final List<Track> tracks = new ArrayList<>();
         final Response response = mSjProtocol
-                .getTrackList(mSyncClient.getAuthorizationHeader(), "");
+                .getTrackList(mAuthComponent.getAuthorizationHeader(), "");
 
         final InputStream inputStream = response.getBody().in();
 
-        final JsonNode rootNode = SyncClient.OBJECT_MAPPER.readTree(inputStream);
+        final JsonNode rootNode = GuavaClient.OBJECT_MAPPER.readTree(inputStream);
         final JsonNode nodes = rootNode.get("data").get("items");
         for (final JsonNode node : nodes) {
-            final Track track = SyncClient.OBJECT_MAPPER.treeToValue(node, Track.class);
+            final Track track = GuavaClient.OBJECT_MAPPER.treeToValue(node, Track.class);
             tracks.add(track);
         }
 
@@ -66,8 +67,8 @@ public class BaseTrackComponent implements TrackComponent {
         final boolean old = HttpURLConnection.getFollowRedirects();
         try {
             HttpURLConnection.setFollowRedirects(false);
-            mAndroidClientProtocol.getTrackUrl(mSyncClient.getAuthorizationHeader(),
-                    "333c60412226c96f", "med", "mob", "e", track.id);
+            mAndroidClientProtocol.getTrackUrl(mAuthComponent.getAuthorizationHeader(),
+                    "333c60412226c96f", "med", "mob", "e", track.getId());
             throw RetrofitError.unexpectedError("TODO", null);
         } catch (final RetrofitError error) {
             final Response response = error.getResponse();
