@@ -6,6 +6,5 @@ public class SyncMobileClientTest {
 
     @Test
     public void test() {
-
     }
 }

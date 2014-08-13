@@ -9,13 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.fusionx.googlemusic.unofficialapi.client.GuavaClient;
-import io.fusionx.googlemusic.unofficialapi.model.Device;
+import io.fusionx.googlemusic.unofficialapi.model.response.Device;
 import io.fusionx.googlemusic.unofficialapi.protocol.MobileProtocol;
 import io.fusionx.googlemusic.unofficialapi.util.Util;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Header;
 import retrofit.client.Response;
+import retrofit.converter.JacksonConverter;
 import retrofit.http.GET;
 
 public abstract class RetrofitBaseAuthComponent implements AuthComponent {
@@ -35,12 +36,15 @@ public abstract class RetrofitBaseAuthComponent implements AuthComponent {
     private String mSjsaidCookie;
 
     public RetrofitBaseAuthComponent() {
-        final RestAdapter.Builder restAdapter = new RestAdapter.Builder()
+        final RestAdapter.Builder builder = new RestAdapter.Builder()
+                .setConverter(new JacksonConverter())
                 .setEndpoint(ENDPOINT_URL);
-        mMobileProtocol = restAdapter.build().create(MobileProtocol.class);
+        mMobileProtocol = builder.build().create(MobileProtocol.class);
 
-        restAdapter.setEndpoint(ENDPOINT_URL);
-        mWebClientAPI = restAdapter.build().create(WebClientAPI.class);
+        mWebClientAPI = builder
+                .setEndpoint(ENDPOINT_URL)
+                .setConverter(new JacksonConverter())
+                .build().create(WebClientAPI.class);
     }
 
     private static String getCookieFromHeader(final String header, final String cookieName) {

@@ -1,4 +1,4 @@
-package io.fusionx.googlemusic.unofficialapi.model;
+package io.fusionx.googlemusic.unofficialapi.model.response;
 
 import java.util.List;
 

@@ -9,9 +9,12 @@ import java.util.concurrent.Executors;
 
 import io.fusionx.googlemusic.unofficialapi.components.auth.AuthComponent;
 import io.fusionx.googlemusic.unofficialapi.components.auth.RetrofitClientLoginAuthComponent;
+import io.fusionx.googlemusic.unofficialapi.components.playlist.PlaylistComponent;
+import io.fusionx.googlemusic.unofficialapi.components.playlist.RetrofitPlaylistComponent;
 import io.fusionx.googlemusic.unofficialapi.components.track.RetrofitTrackComponent;
 import io.fusionx.googlemusic.unofficialapi.components.track.TrackComponent;
-import io.fusionx.googlemusic.unofficialapi.model.Track;
+import io.fusionx.googlemusic.unofficialapi.model.response.Playlist;
+import io.fusionx.googlemusic.unofficialapi.model.response.Track;
 import io.fusionx.googlemusic.unofficialapi.request.GuavaRequest;
 
 public class ProgrammableGuavaClient implements GuavaClient {
@@ -22,11 +25,14 @@ public class ProgrammableGuavaClient implements GuavaClient {
 
     private final TrackComponent mTrackComponent;
 
+    private final PlaylistComponent mPlaylistComponent;
+
     public ProgrammableGuavaClient() {
         mService = MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor());
 
         mAuthComponent = new RetrofitClientLoginAuthComponent();
         mTrackComponent = new RetrofitTrackComponent(mAuthComponent);
+        mPlaylistComponent = new RetrofitPlaylistComponent(mAuthComponent);
     }
 
     @Override
@@ -39,11 +45,14 @@ public class ProgrammableGuavaClient implements GuavaClient {
         return mAuthComponent.isLoggedIn();
     }
 
+    // Auth component start
     @Override
     public GuavaRequest<Boolean> login(final String username, final String password) {
         return new GuavaRequest<>(() -> mAuthComponent.login(username, password), mService);
     }
+    // Auth component end
 
+    // Track component start
     @Override
     public GuavaRequest<List<Track>> getAllTracks() {
         return new GuavaRequest<>(() -> {
@@ -60,4 +69,12 @@ public class ProgrammableGuavaClient implements GuavaClient {
     public GuavaRequest<String> getTrackUrl(final Track track) {
         return new GuavaRequest<>(() -> mTrackComponent.getTrackUrl(track), mService);
     }
+    // Track component end
+
+    // Playlist component start
+    @Override
+    public GuavaRequest<List<Playlist>> getPlaylists() {
+        return new GuavaRequest<>(mPlaylistComponent::getPlaylists, mService);
+    }
+    // Playlist component end
 }

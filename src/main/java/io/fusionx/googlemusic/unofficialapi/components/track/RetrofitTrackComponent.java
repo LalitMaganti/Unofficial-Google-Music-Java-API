@@ -10,13 +10,15 @@ import java.util.List;
 
 import io.fusionx.googlemusic.unofficialapi.client.GuavaClient;
 import io.fusionx.googlemusic.unofficialapi.components.auth.AuthComponent;
-import io.fusionx.googlemusic.unofficialapi.model.Track;
+import io.fusionx.googlemusic.unofficialapi.model.response.Track;
 import io.fusionx.googlemusic.unofficialapi.protocol.MobileProtocol;
 import java8.util.stream.StreamSupport;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Header;
 import retrofit.client.Response;
+import retrofit.converter.GsonConverter;
+import retrofit.converter.JacksonConverter;
 
 public class RetrofitTrackComponent implements TrackComponent {
 
@@ -33,33 +35,20 @@ public class RetrofitTrackComponent implements TrackComponent {
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(MAIN_BASE_URL)
+                .setConverter(new JacksonConverter())
                 .build();
         mSjProtocol = restAdapter.create(MobileProtocol.class);
 
         restAdapter = new RestAdapter.Builder()
                 .setEndpoint("https://android.clients.google.com")
+                .setConverter(new JacksonConverter())
                 .build();
         mAndroidClientProtocol = restAdapter.create(MobileProtocol.class);
     }
 
     @Override
     public List<Track> getAllTracks() throws IOException {
-        final List<Track> tracks = new ArrayList<>();
-        final Response response = mSjProtocol
-                .getTrackList(mAuthComponent.getAuthorizationHeader(), "");
-
-        final InputStream inputStream = response.getBody().in();
-
-        final JsonNode rootNode = GuavaClient.OBJECT_MAPPER.readTree(inputStream);
-        final JsonNode nodes = rootNode.get("data").get("items");
-        for (final JsonNode node : nodes) {
-            final Track track = GuavaClient.OBJECT_MAPPER.treeToValue(node, Track.class);
-            tracks.add(track);
-        }
-
-        inputStream.close();
-
-        return tracks;
+        return mSjProtocol.getTrackList(mAuthComponent.getAuthorizationHeader(), "").getItems();
     }
 
     @Override

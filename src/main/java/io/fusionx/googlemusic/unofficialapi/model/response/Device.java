@@ -1,4 +1,4 @@
-package io.fusionx.googlemusic.unofficialapi.model;
+package io.fusionx.googlemusic.unofficialapi.model.response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

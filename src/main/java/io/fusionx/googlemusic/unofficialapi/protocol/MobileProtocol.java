@@ -1,5 +1,7 @@
 package io.fusionx.googlemusic.unofficialapi.protocol;
 
+import io.fusionx.googlemusic.unofficialapi.model.response.ResponseContainer;
+import io.fusionx.googlemusic.unofficialapi.model.response.Track;
 import retrofit.client.Response;
 import retrofit.http.Body;
 import retrofit.http.Field;
@@ -12,7 +14,7 @@ import retrofit.http.Query;
 public interface MobileProtocol {
 
     @POST("/trackfeed")
-    public Response getTrackList(@Header("Authorization") final String authToken,
+    public ResponseContainer<Track> getTrackList(@Header("Authorization") final String authToken,
             @Body final String length);
 
     @POST("/playlistfeed")

@@ -9,7 +9,8 @@ import java.util.List;
 
 import io.fusionx.googlemusic.unofficialapi.client.GuavaClient;
 import io.fusionx.googlemusic.unofficialapi.client.ProgrammableGuavaClient;
-import io.fusionx.googlemusic.unofficialapi.model.Track;
+import io.fusionx.googlemusic.unofficialapi.model.response.Playlist;
+import io.fusionx.googlemusic.unofficialapi.model.response.Track;
 import io.fusionx.googlemusic.unofficialapi.util.FutureUtil;
 import java8.util.stream.StreamSupport;
 
@@ -83,6 +84,9 @@ public class Example {
                 System.out.println("Login failed. Try again");
             }
         }
+        final List<Playlist> playlist = mobileClient.getPlaylists().sync();
+        playlist.stream().map(Playlist::getName).forEach(System.out::println);
+
         final List<Track> list = mobileClient.getAllTracks().sync();
 
         System.out.print("Name of track to find: ");

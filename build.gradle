@@ -29,6 +29,8 @@ dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
 
     compile 'com.squareup.retrofit:retrofit:+'
+    compile 'com.squareup.retrofit:retrofit-converters:+'
+    compile 'com.squareup.retrofit:converter-jackson:+'
 
     compile 'com.google.guava:guava:+'
 
